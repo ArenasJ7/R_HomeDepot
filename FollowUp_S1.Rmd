@@ -1,0 +1,448 @@
+Primera Sesión R
+==========================================
+
+Temas vistos:
+
+* Configurando el ambiente de trabajo
+* Tipos de variables
+* Estructuras de control
+* Estructuras de datos
+* Importar archivos al ambiente de trabajo
+
+## Configurando el ambiente de trabajo
+
+Antes de empezar un análisis en el IDE de R Studio, es necesario saber cuál es el directorio en el cuál estamos trabajando. Para esto utilizamos la función getwd(). El output de esta función nos dará como resultado el directorio actual en el que estamos trabajando.
+
+```{r}
+## Esta línea de código no se ejecuta, se le conoce como comentario
+
+getwd()
+
+```
+
+En caso de que el archivo que queramos importar a nuestro ambiente de trabajo no está en nuestro directorio actual, será necesario cambiarlos. Para hacer esto podemos utilizar la función setwd() ó podemos hacerlo desde el IDE yendo a Session >> Set working directory >> Choose working directory.
+
+``` {r}
+## Definimos el directorio de trabajo utilizando código de la siguiente manera:
+setwd("/Users/javierarenas/Desktop/R_HomeDepot")
+
+## En windows las rutas de los directorios suelen empezar así: C:/Users/Name_of_user/Desktop/R_HomeDepot
+```
+
+De esta manera será más sencillo importar y exportar archivos a el directorio en donde realizamos nuestro análisis.
+
+## Tipos de variables en R
+
+En el lenguaje R, en general, existen tres tipos de variables:
+
+* Numéricas: Estas pueden ser tipo int o double. Las variables de tipo int, son variables numéricas que no admiten números con decimales. Las variables de tipo double si admiten decimales. Por default, cualquier variable numérica que creemos será de tipo double.
+* Caracter: Las cuáles pueden ser un caracter individual o una cadena de caracteres.
+* Lógicos o boleanos: Este tipo de variables solo tienen dos valores, TRUE y FALSE. R interprea este tipo de variables como 0 (FALSE) y 1 (TRUE), en caso de que se quiera realizar alguna operacion con este tipo de variables.
+
+Para conocer el tipo de variable con el que estamos trabajando utilizamos la función typeof().
+
+``` {r}
+
+## Variable de tipo double
+dbl <- 2.0
+typeof(dbl)
+
+## Variable de tipo caracter
+one_char <- 'a'
+typeof(one_char)
+
+str <- 'This is a string'
+typeof(str)
+
+## Variable tipo boleana
+bool <- TRUE
+typeof(bool)
+
+```
+
+## Estructuras de control
+
+Las estructuras de control nos permiten controlar el flujo de como se ejecuta el código. Para poder utilizar las estructuras de control es necesario conocer los operadores lógicos con los que contamos. Estos son:
+
+* > - Símbolo mayor que
+* >= - Símbolo mayor o igual que
+* < - Símbolo menor que
+* <= - Símbolo menor o igual que
+* == - De esta manera comparamos si dos valores o variables son iguales
+* != - Símbolo de inequidad. En caso de que dos valores o variables no sean iguales, el resultado de la comparación será TRUE
+
+En caso de que queramos concatenar operaciones lógicas, podemos utilizar los siguientes operadores:
+
+* & - Símbolo AND. Para que la evaluación se verdadera ambas condiciones deben de ser verdaderas.
+* | - Sìmbolo OR. PAra que la evaluación sea verdaderos, al menos una de las condiciones debe ser verdadera.
+
+```{r}
+
+a <- 3
+b <- 5
+c <- 7
+
+## El resultado será TRUE por que ambas condiciones son veradaderas
+(a < b) & (a < c)
+
+## El resultado será FALSE por que al menos una condición es FALSE
+(a < b) & (a > c)
+
+
+## El resultado será TRUE por que ambas condiciones son TRUE
+(a < b) | (a < c)
+## El resultado será TRUE por que al menos una condición es TRUE
+(a < b) | (a > c)
+
+```
+
+### if e if else
+
+La función if() nos permite controlar el flujo de nuestro código evualuando una determinado condición y ejecutando el código asociado a esta función en caso de que la condición sea correcta.
+
+``` {r}
+
+a <- 3
+b <- 5
+
+if(a < b){
+  ## Esto se ejecutará si a es menor que b, sino, se saltará esta línea de código y se ejecutará lo que esté después del corchete
+  
+  print("a es menor que b")
+}
+
+print("b es mayor que a")
+
+```
+
+La función ifelse() nos permite anidar un serie de condiciones que queramos. La estructura de esta estructura de control es la siguiente:
+
+ifelse(condición, TRUE, FALSE)
+
+En la sección de TRUE pondremos el código que queremos que se ejecute en caso de que la condición sea verdadera. En FALSE pondremos que queremos que se ejecute en caso de que la condición sea FALSE.
+
+``` {r}
+
+a <- 3
+b <- 5
+c <- 7
+
+ifelse(b > a, print("b es mayor que a"), ifelse(a > c, print(" a es mayor que c","c es menor que c pero mayor a b")))
+
+```
+
+### Ciclos while & for
+
+
+Los ciclos de control nos permiten ejecutar código una serie de veces mientras se cumpla una determinada condición. Así como con la función if(), el código que se ejecutará será el que esté encerrado dentro de los corchetes.
+
+Hay dos tipos de ciclos de control: while & for
+
+El ciclo while nos permite ejecutar código siempre que la condición a evaluar sea verdadera.
+
+``` {r}
+
+## Creamos un ciclo while para que el código se ejecute siempre que a sea menor que b
+
+## No es necesario volver a declarar las varibales a y b que declaramos anteriormente, ya que quedan guardadas en memoria. Por ahora lo haremos así para perder el valor de cada una
+
+a <- 3
+b <- 5
+
+while(a < b) {
+  
+  print("a es menor que b")
+  
+  ## Actualizamos el valor de a
+  a = a +1
+  
+  ## Una alternativa es utilizar la operación de abajo
+  ## a += 1 
+}
+
+print(paste("El valor final de a es ", a))
+```
+
+El ciclo for() es el ciclo más utilizado ya que ejecuta el código encerrado en corchetes tomando las secuencia de valores que se le indican.
+
+Veámoslo con un ejemplo:
+
+``` {r}
+
+## Declaramos un ciclo for que va a tener los valores de una secuencia de datos dada.
+
+for(i in c(1,2,3)){
+  
+  ##Imprimimos el valor de i en cada ciclo
+  print(i)
+}
+
+```
+
+Este manejo la podemos realizar para cualquier estructura de datos que tenga un secuencia. Puede ser para tipo numerico, caracter o lógico.
+
+``` {r}
+
+for(i in c('This','is','a', 'for','loop')){
+  
+  print(i)
+  
+}
+```
+
+
+## Estructuras de datos
+
+### Vectores
+
+Los vectores son arreglos de una dimensión en donde los valores se van separando por una ','. A cada uno de los valores se les asigna una posición que va desde 1 hasta n, donde n es la posición del último valor.
+
+Para acceder a un valor específico de un vector, solo necesitamos indicar la posición en la que se encuentra.
+
+```{r}
+
+vect <- c(1,5,8,12,20)
+
+## Podemos acceder a la segunda posición de vector
+vect[2]
+
+```
+
+``` {r}
+## Podmeos acceder a un rango de posiciones de los vectores
+
+vect[1:3]
+
+```
+
+Las propiedas básicas de un vector son:
+
+1. El tipo de datos que contiene
+
+Un vector solo puede tener un tipo de dato, por tanto si declaramos un vector que tenga diferentes tipos de datos, R automáticamente realizará una conversión para convertir los datos en un mismo tipo.
+
+```{r}
+vect <- c(1,2,3,'a')
+print(vect)
+
+print(typeof(vect))
+
+vect <- c(3.0, TRUE, 3)
+print(vect)
+print(typeof(vect))
+
+```
+
+2. La longitud del vector
+
+Para obtener la longitud del vector utilizamos la función length(vector). Esta función nos permite obtener un valor numérico de la longitud del vector. Esto es útil cuando queremos realizar una operación en cada posición de los vectores.
+
+```{r}
+
+a <- c(1,2,3,4,5)
+b <- c(3,4,5,1,20)
+
+for(i in 1:length(b)){
+  
+  print(a[i] + b[i])
+}
+
+```
+
+Podemos realizar operaciones básicas con vectores como suma, resta, multiplicación y división. Las operaciones se realizan entre cada elemento del vector para cada una de las posiciones. Veamoslo en un ejemplo:
+
+
+```{r}
+
+a <- c(1,2,3)
+b <- c(3,4,5)
+
+a + b
+a - c
+a * b
+a /b
+
+```
+
+### Matrices
+
+La matriz es otro tipo de arreglo popular ya que muchas operaciones de optimización requieren de operaciones con matrices. La matriz es un arreglo que puede llegar a tener dos dimensiones y almacena la información muy similar a un vector.
+
+```{r}
+
+## Como crear una matriz de 2x2
+
+mat <- matrix(c(1,2,3,4), ncol = 2)
+
+mat
+
+```
+
+En el ejemplo anterior podemos ver como al dar como informacion una secuencia de numeros y especificando el número de columnas, R automáticamente infiere el número de filas para la matriz.
+
+Para acceder a un valor dentro de la matriz es necesario especificar el número de la fila o columna que queremos acceder. Para acceder a los valores lo hacemos de manera muy similar a como un vector, solo que las posiciones de las filas y las columnas van separadas por una ','.
+
+```{r}
+
+mat <- matrix(c(1,2,3,4,5,6), ncol = 2)
+
+## Seleccionamos la fila 1 en la columna 1
+mat[1,1]
+
+## Seleccionamos toda la fila en la columna 1
+mat[,1]
+
+## Seleccionamos toda la columna en la fila 1
+mat[1,]
+
+```
+
+Así como con los vectores, se pueden realizar distintas operaciones con matrices. Las operaciones normales de suma, resta, multiplicación y division se hacen elemento a elemento. Es decir, se aplicará la operación correspondiente en las posiciones que coinciden entre las dos matrices.
+
+```{r}
+
+mat <- matrix(c(1,2,3,4), ncol = 2)
+mat2 <- matrix(c(5,6,7,8), ncol = 2)
+
+print(mat + mat2)
+print(mat - mat2)
+
+print(mat * mat2)
+print(mat / mat2)
+
+```
+
+## Dataframes
+
+### Manejo básico de dataframes
+
+El concepto del dataframe es algo muy similar a manejar un tabla en excel. Los dataframes contienen más información que una matriz. Los dataframes contienen:
+
+* Nombres de columnas o headers
+* Indice de fila
+* Valores de para cada variable
+
+La ventaja de utilizar dataframes es que el manejo de información es más sencillo. Para ejemplificar las funciones básicas que podemos realizar con dataframes, utilizaremos un set de datos que viene cargado por default en el ambiente de R.
+
+``` {r}
+
+data <- mtcars
+
+```
+
+Las funciones básicas para usar dataframes son las siguientes:
+
+* str() - Nos permite conocer la estructura del dataframe. Esta función nos da como resultado los nombres de cada columna y el tipo de dato que contiene.
+* head() - Esta función nos permite visualizar rápidamente las primeras 6 filas de nuestro set de datos. Podemos cambiar el número de filas a observar si le damos un valor numérico como argumento.
+tail() - Similar a la función head(), solo que ésta función nos permite visualizar los últimos 6 datos de nuestro data frame.
+* summary() - Esta función nos da como resultado un resumen sobre como están distribuidos los datos de nuestra dataframe
+
+Para acceder a la información contenida en una variable del dataframe, es necesario utilizar el operador '$' seguido por el nombre de la columna.
+
+```{r}
+
+str(data)
+
+head(data, 10)
+
+tail(data, 10)
+
+summary(data)
+
+```
+
+```{r}
+## De esta manera accedemos a la información en la columna llamada mpg
+data$mpg
+
+## Si conocemos el orden de las columnas, podemos acceder a ellas por su posición, similar a como lo hacemos con una matriz
+
+data[1:3]
+
+```
+
+Cuando seleccionamos la información de una columna, el resultado es un vector con los valores de esa columna, lo que nos permite a acceder a los valores de esta columna de manera similar a como los hacemos con un vector.
+
+``` {r}
+
+## Accedemos a los primeros 10 valores de la columna mpg
+data$mpg[1:10]
+
+```
+
+Ahora podemos calcular datos estadísticos de nuestros datos.
+
+```{r}
+
+## Calculamos el promedio de alguna columna
+mean(data$cyl)
+
+## Calculamos el máximo y el mínimo
+max(data$cyl)
+min(data$cyl)
+
+## Calculamos la desviación estándar
+sd(data$cyl)
+
+```
+
+Dado que el resultado de seleccionar una columna del dataframe es un vector con los datos de dicha columna, podemos realizar operaciones entre columnas.
+
+```{r}
+
+data$mpg + data$cyl
+
+data$wt * data$hp
+
+```
+
+### Filtrar información
+
+Para filtrar información utilizamos la función subset(). Para utilizar esta función es necesario primer pasar el nombre del dataframe y luego la o las condiciones paa filtrar los datos.
+
+``` {r}
+
+## Creamos un subset de data, llamado data_2 en donde solo hay filas donde la variables cyl == 4
+data_2 <- subset(data, cyl == 4)
+
+summary(data_2)
+
+## Creamos un subset de data, llamado data_3 en donde solo hay filas donde las variable cyl == 4 y mpg > 18
+
+data_3 <- subset(data, cyl == 4 & mpg > 18)
+summary(data_3)
+
+```
+
+## Importar archivos al ambiente de trabajo
+
+Como vimos al principio de la sesión, el primer paso antes de empezar a realizar nuestro análisis, es necesario saber el directorio de trabajo en el que nos encontramos. Por tanto empezamos verificando que estemos en el directorio de trabajo en donde tenemos nuestro archivo.
+
+```{r}
+
+## Obtenemos el directorio de trabajo
+
+getwd()
+
+## Verificamos que nuestro archivo esta dentro de nuestro directorio de trabajo
+list.files()
+
+```
+
+En este caso trabajaremos con un archivo tipo CSV (comma separated values). Estos archivos son filas de datos separados por una coma para delimitar en donde empieza y termina cada columna. 
+
+Con R podemos importar archivos que no necesariamente tengan extensión .csv, mientras tengan una estructura similar en donde cada columna esté separada por algún caracter específico.
+
+En este ejemplo trabajaremos con el set de datos 'all_stocks_2017-01-01_to_2018-01-01.csv'. Para cargar la información a nuestro ambiente de trabajo utilizamos la función read.csv().
+
+```{r}
+
+data <- read.csv('all_stocks_2017-01-01_to_2018-01-01.csv')
+
+str(data)
+
+summary(data)
+
+head(data)
+
+```

@@ -1,0 +1,21 @@
+Segunda Sesión
+=========================================
+
+Temas vistos:
+
+* Manejo de datos con la librería dplyr
+* RegEx
+* Introducción al anàlisis exploratorio de datos
+
+## Librería dplyr
+
+La librería dplyr fue creada para manipular la información de dataframes de manera más rápida y eficiente. Las funciones más importantes de esta librería son:
+
+1. Summarize
+2. Mutate
+3. Filter
+4. Select
+5. Arrange
+
+Antes de empezar a trabajar cone stas 5 funciones, es necesario conocer el operador '%>%' conocido como pipeline. Este operador nos permite concatenar diferentes funciones, de manera que la salida de una función sirva como argumento de entrada para la siguiente función. Por ahora es todo lo que hay que saber, lo veremos más adelante con algunos ejemplos.
+
