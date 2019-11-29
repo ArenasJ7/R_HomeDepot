@@ -1,0 +1,113 @@
+Tercera Sesión
+==================================================
+
+Temas vistos:
+
+* Manejo de valores faltantes
+* Análisis exploratorio de datos
+* KnitR
+* Market Basket Analysis usando la librería arules
+
+## Manejo de valores faltantes
+
+Muchas veces nos toca trabajar con sets de datos en donde algunas filas no tienen valores. Esto complica las cosas ya que al intentar realizar operaciones en donde hay datos faltantes, obtendremos errores.
+
+Si la cantidad de datos faltantes no son más de un 10%, podemos omitir estos datos de nuestro dataframe.
+
+```{r}
+
+## Busar si nuestro set de datos tienen valores faltantes
+
+data <- airquality
+sum(is.na(data))
+
+## Utilizamos la funcion na.omit() para omitir los datos faltantes en nuestro dataframe
+
+str(na.omit(data))
+
+```
+
+```{r}
+
+summary(data$Ozone)
+
+oz_mean <- mean(data$Ozone, na.rm = TRUE)
+
+data$Ozone[which(is.na(data$Ozone))] <- oz_mean
+
+summary(data$Ozone)
+
+```
+
+## Análisis exploratorio de datos
+
+El análisis exploratorio de datos es la parte más importante en lo que llamamos ‘ingeniería de variables’. Esta es la parte en donde obtenemos los insights de la información y definimos cuáles son las variables que afectan nuestro resultado y de qué manera nos afectan.
+
+Para realizar un análisis exploratorio de datos, es necesario primero conocer el set de datos con el que estamos trabajando.
+
+```{r}
+data <- read.csv("all_stocks_2017-01-01_to_2018-01-01.csv")
+
+str(data)
+
+head(data)
+```
+
+La librería ggplot nos permite manejar la información de las gráficas de manera más fácil y aparte tiene más funciones para graficar que la librería base de R. Veamos un ejemplo:
+
+``` {r, warning=FALSE}
+
+library(ggplot2)
+library(dplyr)
+
+new_data <- data %>% group_by(Name)
+
+temp_data <- new_data %>% filter(Name == c("AAPL", "IBM","AMZN", "GOOGL"))
+
+qplot(temp_data$Open, fill=as.factor(temp_data$Name), bins=100, colour="red")
+
+hist(temp_data$Open, breaks=100)
+
+```
+
+## Histogramas
+
+## Histogramas con la librería base de R
+
+```{r}
+
+## Histograma con la librería base de R
+hist(data$Close, border = "black", col ="red", breaks=100,
+     main = "Closing stock values distribution")
+
+```
+
+```{r}
+
+## Histograma utilizando ggplot2
+
+g <- ggplot(data, aes(x=Close, fill=as.factor(new_data$Name))) + geom_histogram(colour='black',bins=100) + ggtitle("Closing stock values distribution")
+
+g
+
+```
+
+## Gráfico de caja
+
+Los gráficos de caja y bigotes nos ayudan a ver la distribución de los datos de una mejor manera. Por default la información que nos da es la mediana de la muestra, los quantiles 1 y 3 y los mínimos y máximos.
+
+```{r}
+
+## Gráfico de caja y bigotes con la librería base de R
+boxplot(data$Close, main="Distribución del valor de las acciones al cierre")
+
+boxplot(data$Close, main="Distribución del valor de las acciones al cierre", outline = FALSE)
+
+```
+
+```{r}
+
+## Grafico de caja y bigotes con la librería ggplot2
+g <- ggplot(data, aes(y=Close))+geom_boxplot(color="blue")
+g
+```

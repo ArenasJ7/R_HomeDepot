@@ -1,5 +1,5 @@
 Segunda Sesión
-=========================================
+====================================================
 
 Temas vistos:
 
@@ -17,5 +17,199 @@ La librería dplyr fue creada para manipular la información de dataframes de ma
 4. Select
 5. Arrange
 
-Antes de empezar a trabajar cone stas 5 funciones, es necesario conocer el operador '%>%' conocido como pipeline. Este operador nos permite concatenar diferentes funciones, de manera que la salida de una función sirva como argumento de entrada para la siguiente función. Por ahora es todo lo que hay que saber, lo veremos más adelante con algunos ejemplos.
+Antes de empezar con las funciones, es necesario aprender a utilizar el operador %>%, conocido como pipeline. Este operador te permite concatenar operaciones de manera que la salida de la operación anterior sea la entrada de la siguiente operación:
 
+```{r}
+library(dplyr)
+data <- mtcars
+
+## Ejemplo de pipeline
+data %>% summarize(mean = mean(mpg))
+
+# Esto es lo mismo que hacer lo siguiente:
+mean(data$mpg)
+```
+
+
+Parece más complicado utilizar el operador pipeline, más adelante veremos su utilidad.
+
+1. Summarize:
+
+La función summarize nos permite realizar una operación dentro de un definido set de datos, ya esté agrupado o no. El resultado de esta función será una tabla conteniendo la información de la función aplicada. 
+
+``` {r}
+## Ejemplo de summarize normal vs datos agrupados
+data %>% summarize(mean = mean(mpg), max = max(mpg), min = min(mpg))
+
+data %>% group_by(cyl) %>% summarize(mean = mean(mpg), min = min(mpg), max = max(mpg))
+
+```
+
+Esta operación ayuda a crear una tabla con la información resumida y lista para usar.
+
+2. Mutate
+
+La función mutate se utiliza para agregar columnas con nuevos valores al set de datos. De nuevo, el operador pipeline nos ayuda a hacer esta tarea de manera más sencilla.
+
+```{r}
+## Ejemplo de mutate con dplyr vs normal
+## Normal
+
+data$total_mpg_by_cyl = 0
+for(val in unique(data$cyl)){
+     data_loop = data[data$cyl == val,]
+    if (val == 4) data$total_mpg_by_cyl[data$cyl == val] = sum(data_loop$mpg)
+     else if (val == 6) data$total_mpg_by_cyl[data$cyl == val] = sum(data_loop$mpg)
+     else data$total_mpg_by_cyl[data$cyl == val] = sum(data_loop$mpg)
+}
+
+head(data[,c('cyl','total_mpg_by_cyl')])
+
+## dplyr
+data <- mtcars
+
+new_data <- data %>% group_by(cyl) %>% mutate(total_mpg_by_cyl = sum(mpg))
+
+head(new_data[, c('cyl','total_mpg_by_cyl')])
+```
+
+Con este ejemplo podemos ver lo fácil que dplyr hace este tipo de operaciones.
+
+3. Filter
+
+Filter es una función que nos permite obtener filas de nuestro set de datos donde se cumpla alguna condición de nuestro interés.
+
+```{r}
+## Ejemplo filter con dplyr vs normal
+## Normal
+new_data <- data[data$cyl == 4,]
+
+head(new_data)
+
+## dplyr
+new_data <- data %>% filter(cyl == 4)
+head(new_data)
+
+```
+
+4. Arrange
+
+Esta función nos permite ordenar la información de nuestro set de datos con base en las variables que le especifiquemos. Una vez más, esto es más sencillo hacerlo co esta función que de manera manual.
+
+```{r}
+## Arrange con dplyr vs normal
+## Normal
+orders <- c()
+for(mpgs in sort(data$mpg)){
+ 
+     value <- which(data$mpg == mpgs)
+     orders <- c(orders,value)
+ }
+new_data <- data[orders,]
+head(new_data)
+
+
+## dplyr
+new_data <- data %>% arrange(cyl)
+head(new_data, 15)
+```
+
+Podemos ordenar los datos por el numero de columnas que queramos. El orden de los datos se hará de manera secuencial.
+
+```{r}
+
+new_data <- data %>% arrange(cyl, desc(mpg))
+head(new_data, 15)
+
+```
+
+5. Select
+
+Esta función es similar a filter, la diferencia es que no seleccionamos filas donde una condición se cumpla, sino que seleccionamos las columnas que nos interesan.
+
+```{r}
+
+new_data %>% select(mpg, cyl, wt)
+
+```
+
+## Regular Expressions
+
+RegEx es diminutivo de ‘Regular Expresions’, estas son una serie de funciones que nos permiten filtrar lo datos de tipo texto para poder obtener información de este tipo de datos. 
+
+Antes de empezar con las funciones, necesitamos conocer lo que significan algunos caracteres.
+
+^ - Este caracter se utiliza para denotar que las secuencia de caracteres que intentamos encontrar, se encuentra al principio de la oración.
+$ - Este caracter se utiliza para denotar que la secuencia de caracteres que intentamos encontrar, se encuentra al final de la oración.
+* - Este caracter indica que la secuencia que buscamos se repita una n cantidad de veces
+. - Este caracter indica que buscamos cualquier caracter.
+
+Con estos caracteres especiales ahora podemos utilizar las funciones de RegEx para busca patrones de texto.
+
+grepl(‘sequence’, text): Esta función nos indica si la sequencia de caracteres que buscamos existe o no.
+
+grep(‘sequence’, text): Esta función nos indica en que posición se encuentra la secuencia de caracteres que buscamos.
+
+gsub(‘sequence’, ‘replacement’, text): Esta función nos permite manipular la información del texto para que eliminemos los caracteres que no nos sirven.
+
+Para las siguientes funciones necesitaremos la librería ‘tydiverse’
+
+str_replace(text, ‘sequence', ‘replacement’): Esta función nos permite quitar únicamente los caracteres cuando se repiten por primera vez.
+
+str_replace_all(): Esta función realiza la misma operación que gsub(), en donde los caracteres que cumplan la secuencia indicada son cambiados.
+
+Para demostrar como funciona regex, utilizaremos el set de datos de IMDB.
+
+```{r, warning=FALSE}
+
+data <- read.csv("imdb_tr.csv")
+
+data$text[1]
+
+```
+
+Vamos a filtrar la información de cada review para ver como funcionan las funciones mencionadas anteriormente:
+
+```{r, warning=FALSE}
+
+## Checar si la secuencia <br se encuentran en alguna parte del texto
+grepl("*<br", data$text[2])
+
+```
+
+Dado que tenemos caracteres no deseados en nuestro texto, utilizamos la función gsub para quitar los patrones que no nos interesan.
+
+```{r}
+
+## Sustituir la secuencia <br por ''.
+
+gsub("<br", '', data$text[2])
+
+```
+
+``` {r, warning=FALSE}
+
+grep("*<br", data$text)
+
+```
+
+```{r, warning=FALSE}
+
+## Total de textos que tienen la palabra Disney
+sum(grepl("Disney", data$text))
+
+grep("Disney", data$text)
+
+```
+
+En el ejemplo pasado buscamos los textos en donde la aparecía la palabra "Disney", ¿Qué pasa si la palabra aparece con la primera letra en miníscula? Con RegEx podemos dar como argumento que la secuencia buscada contenga tanto letras mayúsculas como minúsculas.
+
+```{r, warning=FALSE}
+
+## Buscar la secuencia "Disney" o "disney"
+
+sum(grepl("[Dd]isney", data$text))
+
+sum(grepl("Disney", data$text))
+
+```
