@@ -3,9 +3,44 @@ Segunda Sesión
 
 Temas vistos:
 
+* Funcion merge para realizar JOINS entre dataframes
 * Manejo de datos con la librería dplyr
+* Manejo de datos de tipo fecha con la librería lubridate
 * RegEx
-* Introducción al anàlisis exploratorio de datos
+
+## Unir dos dataframes por columnas en común
+
+Si tenemos dos dataframes que tienen columnas en común, utilizamos la función merge. Esta función realiza un "INNER JOIN" entre las dos columnas.
+
+```{r}
+
+## Como unimos dos dataframes con columnas en común
+
+data <- data.frame(surname=c("Tukey","Venables","Tierney","Ripley"), nationality=c("US","Australia","US","UK"),retired=c("yes", rep("no",3)))
+
+head(data)
+
+data_2 <- data.frame(surname=c("Tukey","Venables","Tierney","Ripley","Ripley","McNeill"), title=c("Exploratory Data Analysis", "Modern Applied Statistics","LISP-STAT","Spatial Statistics","Stochastic Simulation","Interactive Data Analytics"))
+
+head(data_2)
+
+```
+
+```{r, warning=FALSE}
+
+## Para juntar los dos dataframes utilizamos la funcion merge()
+merge(data, data_2)
+
+## FULL OUTER JOIN
+merge(data, data_2, all = TRUE)
+
+## LEFT OUTER JOIN
+merge(data, data_2, all.x = TRUE)
+
+## RIGHT OUTER JOIN
+merge(data, data_2, all.y = TRUE)
+
+```
 
 ## Librería dplyr
 
@@ -133,16 +168,68 @@ new_data %>% select(mpg, cyl, wt)
 
 ```
 
+## Manejo de datos de tipo fecha
+
+Cuando los datos vienen de un archivo de texto, la función read.csv() leera este tipo de datos como un dato de tipo caracter. Esto no nos da facilidad de manejar la información ya que para extraer fechas necesitamos utilizar 'regular expresions'.
+
+Afortunadamente, hay una librería que hace que esta tarea sea más fácil. La librería lubridate nos permite crear variables de tipo fecha a partir de datos de tipo caracter.
+
+```{r}
+library(lubridate)
+
+## Convertir datos de tipo caracter a tipo fecha
+a_date <- ymd("2019-01-01")
+
+class(a_date)
+
+```
+
+Podemos ver que el tipo de dato que obtenemos es de clase "Date". Los objetos de clase "Date" pueden ser manipulados de manera más fácil. Vamos a ver un ejemplo.
+
+```{r}
+
+## Extraer el día, mes y año de una fecha
+
+day(a_date)
+month(a_date)
+year(a_date)
+
+```
+
+
+```{r}
+
+## Utilizaremos el set de datos de acciones
+
+data <- read.csv('all_stocks_2017-01-01_to_2018-01-01.csv')
+
+## Vemos la estructura de nuestra información
+
+str(data)
+
+head(data$Date)
+
+class(data$Date)
+
+ymd(data$Date)
+
+## Convertimos la variable a date a clase fecha
+
+```
+
 ## Regular Expressions
 
 RegEx es diminutivo de ‘Regular Expresions’, estas son una serie de funciones que nos permiten filtrar lo datos de tipo texto para poder obtener información de este tipo de datos. 
 
 Antes de empezar con las funciones, necesitamos conocer lo que significan algunos caracteres.
 
-^ - Este caracter se utiliza para denotar que las secuencia de caracteres que intentamos encontrar, se encuentra al principio de la oración.
-$ - Este caracter se utiliza para denotar que la secuencia de caracteres que intentamos encontrar, se encuentra al final de la oración.
-* - Este caracter indica que la secuencia que buscamos se repita una n cantidad de veces
-. - Este caracter indica que buscamos cualquier caracter.
+* ^ - Este caracter se utiliza para denotar que las secuencia de caracteres que intentamos encontrar, se encuentra al principio de la oración.
+
+* $ - Este caracter se utiliza para denotar que la secuencia de caracteres que intentamos encontrar, se encuentra al final de la oración.
+
+* '*- Este caracter indica que la secuencia que buscamos se repita una n cantidad de veces
+
+* . - Este caracter indica que buscamos cualquier caracter.
 
 Con estos caracteres especiales ahora podemos utilizar las funciones de RegEx para busca patrones de texto.
 
@@ -213,3 +300,5 @@ sum(grepl("[Dd]isney", data$text))
 sum(grepl("Disney", data$text))
 
 ```
+
+

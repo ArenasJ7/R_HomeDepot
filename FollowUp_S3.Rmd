@@ -107,7 +107,63 @@ boxplot(data$Close, main="Distribución del valor de las acciones al cierre", ou
 
 ```{r}
 
+data <- data[data$Name == "AMZN" | data$Name == "AAPL" | data$Name == "IBM",]
+
 ## Grafico de caja y bigotes con la librería ggplot2
 g <- ggplot(data, aes(y=Close))+geom_boxplot(color="blue")
 g
+
+g <- ggplot(data, aes(y=Close,fill=Name))+geom_boxplot(color="blue", outlier.shape = NA) + ggtitle("Disttribución de acciones al cierre")
+
+g
 ```
+
+## Graficar series de datos
+
+```{r}
+
+library(lubridate)
+
+data$Date <- ymd(data$Date)
+
+g <- ggplot(data, aes(x=Date, y=Close, color=Name))
+g <- g + geom_line() + scale_color_brewer(palette= "Dark2")
+
+g
+```
+
+## Grafica de dispersión
+
+Las gráficas de dispersión nos permiten visualizar el comportamiento entre dos variables. Generalmente queremos observar si una variable tiene efecto en otra variable. Por convención, la variable dependiente se gráfica en el eje vertical y la variable independiente se grafica en el eje horizontal.
+
+```{r}
+
+data <- mtcars
+## Gráfica de dispersión con la librería base de R
+
+plot(data$wt, data$mpg,col="blue", main="Peso contra rendimiento del vehículo")
+
+```
+
+``` {r}
+
+## Crear gráfica de dispersión con la librería GGPLOT
+g <- ggplot(data, aes(wt, mpg, color=as.factor(cyl))) + geom_point(alpha=0.7)
+
+g
+```
+
+## Grafica de tipo violín
+
+```{r}
+
+## Este tipo de gráficas solo se pueden realizar con la librería ggplot2
+g <- ggplot(data, aes(as.factor(cyl), mpg , fill=as.factor(cyl)))
+g <- g + geom_violin()
+g <- g + scale_fill_brewer(palette = "Dark2")
+
+g
+
+```
+
+
